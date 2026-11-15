@@ -3,18 +3,18 @@
 Global and local optimisation of a direct Earth → Itokawa rendezvous transfer,
 extending the interplanetary phase of my BSc thesis (Politecnico di Milano, 2025).
 
-The thesis solved the transfer in MATLAB with a brute-force grid over three geometric
+The thesis solved the transfer in MATLAB with a 'brute-force' grid over three geometric
 parameters (Earth departure position, asteroid arrival position, argument of
 pericentre of the transfer conic), imposing the rendezvous through a time-tolerance
 window. This package reformulates the problem as a **Lambert problem in (t0, T)**,
 validates it against the MATLAB results, and then (Levels 1–2) adds global
 optimisers, gradient-based refinement and GPU acceleration.
 
-| Level | Content | Status |
+| Level | Content |
 | --- | --- | --- |
-| 0 – Validation | Kepler/elements, Izzo's Lambert solver, faithful port of the MATLAB grid, Lambert porkchop + SQP | done |
-| 1 – Global + local | Differential Evolution from scratch, pygmo algorithms, statistical benchmark vs grid | planned |
-| 2 – GPU | Lambert and DE population on the GPU (Numba CUDA, CuPy), speed-up study | planned |
+| 0 – Validation | Kepler/elements, Izzo's Lambert solver, faithful port of the MATLAB grid, Lambert porkchop + SQP |
+| 1 – Global + local | Differential Evolution from scratch, pygmo algorithms, statistical benchmark vs grid |
+| 2 – GPU | Lambert and DE population on the GPU (Numba CUDA, CuPy), speed-up study |
 
 ## Level 0 – Validation results (thesis Keplerian model, 2025–2028)
 
