@@ -1,0 +1,33 @@
+{
+  "_source": "MatlabCode/Scenario02/Advanced, script for 4 Jan 2025 - 3 Jan 2028 (values copied from the comments of the MATLAB script and from the thesis report, Table A.5)",
+  "units": "km, s, rad, km/s",
+  "mu_sun": 1.327e11,
+  "asteroid_from_horizons": {
+    "a": 1.966476025867008e8,
+    "e": 0.283848775389335,
+    "theta0": 3.2753017708
+  },
+  "optimum": {
+    "dv_total": 5.720441531561098,
+    "dv1": 3.0732,
+    "dv2": 2.6472,
+    "tof": 3.398569047730611e7,
+    "k_opt": 7602,
+    "theta_earth_label": 2.602413028495237,
+    "theta_ast_label": 4.383695398283848,
+    "transfer": {
+      "a": 1.848219275542337e8,
+      "e": 0.185344860301687,
+      "i": 0.028484859392634,
+      "raan": 1.231800840855091,
+      "argp": 2.855993321445267,
+      "theta1": 0.282372259975278,
+      "theta2": 4.75248333525283
+    },
+    "departure_date_report": "2027-05-30",
+    "arrival_date_report": "2028-05-27"
+  },
+  "dv_min_per_revolution": [7.989321300896556, 7.903437779646343, 5.720441531561098],
+  "k_opt_per_revolution": [1009, 4799, 7602],
+  "runtime_matlab_s": 21600
+}

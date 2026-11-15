@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "itokawa-opt"
+version = "0.1.0"
+description = "Global and local optimisation of an Earth-Itokawa interplanetary transfer (thesis extension)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Federico Carugati" }]
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "numba>=0.59",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov", "ruff>=0.6", "mypy", "pre-commit", "pykep>=3; python_version < \"3.14\""]
+global = ["pygmo>=2.19"]                      # Level 1: global optimisers
+gpu = ["cupy-cuda12x"]                        # Level 2: GPU (numba.cuda is already in numba)
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "gpu: tests that need a CUDA GPU (skipped otherwise)",
+    "slow: long-running tests",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
+ignore = ["E741"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
