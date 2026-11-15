@@ -44,7 +44,10 @@ class KeplerEphemeris:
 def thesis_bodies(sc: ThesisScenario | None = None) -> tuple[KeplerEphemeris, KeplerEphemeris]:
     """Earth and Itokawa exactly as defined in the MATLAB script."""
     sc = sc or ThesisScenario()
-    earth = KeplerEphemeris( Elements(sc.a_earth, sc.e_earth, sc.i_earth, sc.raan_earth, 
-                                      sc.argp_earth, sc.theta0_earth), sc.mu, "Earth")
+    earth = KeplerEphemeris(
+        Elements(sc.a_earth, sc.e_earth, sc.i_earth, sc.raan_earth, sc.argp_earth, sc.theta0_earth),
+        sc.mu,
+        "Earth",
+    )
     itokawa = KeplerEphemeris(car2par(sc.r0_ast, sc.v0_ast, sc.mu), sc.mu, "Itokawa")
     return earth, itokawa
