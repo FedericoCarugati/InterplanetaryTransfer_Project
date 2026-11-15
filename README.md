@@ -1,20 +1,24 @@
-# itokawa-opt
+# Interplanetary Transfer
 
 Global and local optimisation of a direct Earth → Itokawa rendezvous transfer,
 extending the interplanetary phase of my BSc thesis (Politecnico di Milano, 2025).
 
-The thesis solved the transfer in MATLAB with a 'brute-force' grid over three geometric
-parameters (Earth departure position, asteroid arrival position, argument of
-pericentre of the transfer conic), imposing the rendezvous through a time-tolerance
+The thesis solved the transfer in MATLAB dividing the mission in three phases: 
+Earth-orbit manoeuvres to a parking orbit, heliocentric interplanetary transfer, escape 
+and capture with patched conics. The second scenario was initialy solved with a 'brute-force' 
+grid over three geometric parameters (Earth departure position, asteroid arrival position, 
+argument of pericentre of the transfer conic), imposing the rendezvous through a time-tolerance
 window. This package reformulates the problem as a **Lambert problem in (t0, T)**,
 validates it against the MATLAB results, and then (Levels 1–2) adds global
 optimisers, gradient-based refinement and GPU acceleration.
 
-| Level | Content |
-| --- | --- | --- |
-| 0 – Validation | Kepler/elements, Izzo's Lambert solver, faithful port of the MATLAB grid, Lambert porkchop + SQP |
-| 1 – Global + local | Differential Evolution from scratch, pygmo algorithms, statistical benchmark vs grid |
-| 2 – GPU | Lambert and DE population on the GPU (Numba CUDA, CuPy), speed-up study |
+The expansion of the starting project was conducted through the following steps
+
+| 0 – Validation -> Kepler/elements, Izzo's Lambert solver, faithful port of the MATLAB grid, Lambert porkchop + SQP |
+
+| 1 – Global + local -> Differential Evolution from scratch, pygmo algorithms, statistical benchmark vs grid |
+
+| 2 – GPU -> Lambert and DE population on the GPU (Numba CUDA, CuPy), speed-up study |
 
 ## Level 0 – Validation results (thesis Keplerian model, 2025–2028)
 
