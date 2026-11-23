@@ -20,7 +20,7 @@ MATLAB) and extends its interplanetary phase in Python with:
 All results are reproducible from fixed seeds, and the code is covered by 52 automated tests
 run in continuous integration.
 
-**Technical report:** [Interplanetary_Transfer_Report.pdf](docs/Interplanetary_Transfer_Report.pdf)
+**Technical report:** [Interplanetary_Transfer_Report.pdf](docs/Interplanetary_Transfer_Project.pdf)
 (66 pages: theory, methodology, full results and discussion).
 
 ---
