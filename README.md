@@ -4,6 +4,8 @@
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+[![Report](https://img.shields.io/badge/technical%20report-PDF-red)](docs/Interplanetary_Transfer_Report.pdf)
+
 Preliminary mission design of a rendezvous with the near-Earth asteroid **25143 Itokawa**.
 The project starts from my BSc thesis in Aerospace Engineering (Politecnico di Milano, 2025,
 MATLAB) and extends its interplanetary phase in Python with:
@@ -17,6 +19,9 @@ MATLAB) and extends its interplanetary phase in Python with:
 
 All results are reproducible from fixed seeds, and the code is covered by 52 automated tests
 run in continuous integration.
+
+**Technical report:** [Interplanetary_Transfer_Report.pdf](docs/Interplanetary_Transfer_Report.pdf)
+(66 pages: theory, methodology, full results and discussion).
 
 ---
 
@@ -53,6 +58,7 @@ Main findings of the benchmark:
 | [`MatlabCode/`](MatlabCode) | Original thesis code (MATLAB), three mission phases |
 | [`PythonCode/`](PythonCode) | Python package `itokawa_opt`: models, optimisers, benchmark, tests |
 | [`.github/workflows/`](.github/workflows) | Continuous integration: the test suite runs on every push and pull request |
+| [`docs/`](docs) | Technical report (PDF) |
 
 ---
 
