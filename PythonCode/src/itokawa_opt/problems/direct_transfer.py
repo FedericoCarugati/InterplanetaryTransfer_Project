@@ -71,7 +71,7 @@ def _evaluate_kernel(r1, v_dep_body, r2, v_arr_body, tof, mu, prograde):
     dv1 = np.empty(n)
     dv2 = np.empty(n)
     rmin = np.empty(n)
-    angle = np.empty(n)
+    theta = np.empty(n)
     for k in prange(n):
         out = lambert_izzo(
             r1[k, 0], r1[k, 1], r1[k, 2], r2[k, 0], r2[k, 1], r2[k, 2], tof[k], mu, prograde
@@ -80,7 +80,7 @@ def _evaluate_kernel(r1, v_dep_body, r2, v_arr_body, tof, mu, prograde):
             dv1[k] = math.nan
             dv2[k] = math.nan
             rmin[k] = math.nan
-            angle[k] = math.nan
+            theta[k] = math.nan
             continue
         a0 = out[0] - v_dep_body[k, 0]
         a1 = out[1] - v_dep_body[k, 1]
@@ -111,8 +111,8 @@ def _evaluate_kernel(r1, v_dep_body, r2, v_arr_body, tof, mu, prograde):
         cx = r1[k, 1] * r2[k, 2] - r1[k, 2] * r2[k, 1]
         cy = r1[k, 2] * r2[k, 0] - r1[k, 0] * r2[k, 2]
         ang = math.atan2(math.sqrt(cx * cx + cy * cy + cz * cz), dot)
-        angle[k] = ang if cz >= 0.0 else 2.0 * math.pi - ang
-    return dv1, dv2, rmin, angle
+        theta[k] = ang if cz >= 0.0 else 2.0 * math.pi - ang
+    return dv1, dv2, rmin, theta
 
 
 @dataclass
@@ -159,7 +159,25 @@ class DirectTransfer:
         res = self.evaluate(np.array([x[0]]), np.array([x[1]]))
         dv = float(res["dv"][0])
         g = (self.r_min_sun - float(res["r_min"][0])) / AU  # <= 0 when feasible
-        return [dv if np.isfinite(dv) else 1e3, g if np.isfinite(g) else 1e3]
+        return [dv if np.isfinite(dv) else 1e3, 
+                g if np.isfinite(g) else 1e3]
 
+    def fitness_batch(self, x: NDArray[np.float64]) -> tuple[NDArray, NDArray]:
+        """Objective and constraint for a whole population in one call.
+
+        ``x`` has shape (n, 2), one row per candidate [t0, T]. Returns ``f`` (n,) and
+        ``g`` (n,), with the same conventions as :meth:`fitness`: ``g <= 0`` when the arc
+        stays farther than ``r_min_sun`` from the Sun, and failed Lambert solutions
+        (NaN) are replaced by 1e3 in both, so that they lose every comparison.
+
+        A single call costs ~1 us per candidate, a call of :meth:`fitness` ~250 us
+        (Python overhead): population-based optimisers must use this method.
+        """
+        x = np.atleast_2d(np.asarray(x, dtype=float))
+        res = self.evaluate(x[:, 0], x[:, 1])
+        f = res["dv"]
+        g = (self.r_min_sun - res["r_min"]) / AU
+        return np.where(np.isfinite(f), f, 1e3), np.where(np.isfinite(g), g, 1e3)
+    
     def get_nic(self) -> int:
         return 1

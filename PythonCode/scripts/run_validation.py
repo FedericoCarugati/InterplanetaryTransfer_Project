@@ -9,7 +9,7 @@ Steps
 1. Building blocks: Itokawa elements from the Horizons state (car2par) vs MATLAB.
 2. Lambert evaluated at the MATLAB optimum (t0, T) vs the MATLAB delta-V.
 3. Lambert porkchop on the same 2025-2028 window + SQP refinement, per Earth revolution.
-4. (optional) Faithful vectorised port of the three nested MATLAB loops.
+4. Faithful vectorised port of the three nested MATLAB loops.
 
 Outputs: results/validation/summary.json and figures in results/validation/.
 """
@@ -60,11 +60,16 @@ def main() -> None:
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
 
+    # Creation of the scenario and the two bodies
     sc = ThesisScenario()
     earth, itokawa = thesis_bodies(sc)
     summary: dict = {}
 
-    # ---------------------------------------------------------------- 1. building blocks
+    # ---------------------------------------------------------------- 
+    # 1. Building blocks
+    # ----------------------------------------------------------------
+
+    # Verify the matching of the Itokawa elements
     el = itokawa.elements
     ref_a = REF["asteroid_from_horizons"]
     summary["car2par"] = {
@@ -78,9 +83,15 @@ def main() -> None:
         f"{summary['car2par']['a_rel_err']:.1e})"
     )
     print(f"   e  = {el.e:.12f}   (MATLAB {ref_a['e']:.12f})")
-    print(f"   th0= {el.theta:.10f}     (MATLAB {ref_a['theta0']:.10f})")
+    print(f"   th0 = {el.theta:.10f}     (MATLAB {ref_a['theta0']:.10f})")
 
-    # ---------------------------------------------------------------- 2. Lambert @ MATLAB optimum
+
+    # ---------------------------------------------------------------- 
+    # 2. Lambert @ MATLAB optimum
+    # ----------------------------------------------------------------
+
+    # Comparison between the MATLAB optimum and the Lambert evaluation
+    # at the same t0 and T
     opt = REF["optimum"]
     t_earth = earth.period
     # MATLAB label = anomaly one time step before the state actually used, 3rd revolution
@@ -89,6 +100,8 @@ def main() -> None:
     )
     t0_m = t_label + sc.dt + 2 * t_earth
     tof_m = opt["tof"]
+
+    # Definition of the problem for Lambert evaluation
     problem = DirectTransfer(
         earth,
         itokawa,
@@ -96,6 +109,8 @@ def main() -> None:
         tof_bounds=(30 * DAY, itokawa.period),
         r_min_sun=sc.r_min_sun,
     )
+
+    # Evaluation of the Lambert problem at MATLAB optimum (t0, T)
     ev = problem.evaluate(np.array([t0_m]), np.array([tof_m]))
     dv_lam = float(ev["dv"][0])
     summary["lambert_at_matlab_optimum"] = {
@@ -116,7 +131,10 @@ def main() -> None:
         f"{100 * rel(dv_lam, opt['dv_total']):.3f} %)"
     )
 
-    # ---------------------------------------------------------------- 3. Lambert porkchop
+    # ---------------------------------------------------------------- 
+    # 3. Lambert porkchop
+    # ----------------------------------------------------------------
+
     step = args.step_days * DAY
     t0_grid = np.arange(0.0, 3 * t_earth, step)
     tof_grid = np.arange(30 * DAY, itokawa.period, step)
@@ -149,12 +167,14 @@ def main() -> None:
                 "dv_matlab": REF["dv_min_per_revolution"][r],
             }
         )
+
     summary["porkchop"] = {
         "n_points": pc.n_evaluated,
         "runtime_s": pc.runtime_s,
         "step_days": args.step_days,
         "per_revolution": per_rev,
     }
+    
     print("   rev | dV MATLAB | dV Lambert (refined) | departure  | TOF [d] | angle [deg]")
     for p in per_rev:
         print(
@@ -165,7 +185,10 @@ def main() -> None:
     best = min(per_rev, key=lambda p: p["dv_refined"])
     summary["best"] = best
 
-    # ---------------------------------------------------------------- 4. faithful MATLAB port
+    # ---------------------------------------------------------------- 
+    # 4. faithful MATLAB port
+    # ----------------------------------------------------------------
+
     if args.matlab_grid:
         print("\n4) Faithful port of the MATLAB grid search (this takes a few minutes)...")
         g = run_grid_search(sc, matlab_compat=True, verbose=True)

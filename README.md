@@ -1,8 +1,7 @@
 # Interplanetary Transfer: Earth → Itokawa
 
 Mission design to the near-Earth asteroid 25143 Itokawa, from my BSc thesis in
-Aerospace Engineering (Politecnico di Milano, 2025), and its extension in Python with a
-Lambert-based formulation of the interplanetary transfer and modern optimisation methods.
+Aerospace Engineering (Politecnico di Milano, 2025), and its extension in Python with a Lambert-based formulation of the interplanetary transfer and modern optimisation methods.
 
 | Folder | Content |
 | --- | --- |
@@ -95,7 +94,8 @@ Found while porting it (details in `PythonCode/src/itokawa_opt/optimizers/grid_m
 | Step | Content | Status |
 | --- | --- | --- |
 | Validation | Kepler and element conversions, Lambert solver, MATLAB port, Lambert grid + SQP | done |
-| Global optimisation | Differential Evolution written from scratch, comparison with pygmo algorithms, statistical benchmark against the grid | in progress |
+| Global optimisation | Differential Evolution written from scratch (rand/1, best/1, current-to-best/1, jDE), hybrid DE + SQP, statistical benchmark against the grid | done |
+| Other global optimisers | Comparison with pygmo algorithms (SADE, CMA-ES, MBH) | planned |
 | GPU | Lambert solver and DE population on the GPU (Numba CUDA), speed-up study | planned |
 
 ## Running the Python code
@@ -105,10 +105,11 @@ cd PythonCode
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 python scripts/run_validation.py     # validation, ~10 s (add --matlab-grid for the MATLAB port, ~15 min)
+python scripts/run_benchmark.py
 python -m pytest                     # automated tests
 ```
 
-Results and figures are written to `PythonCode/results/validation/`.
+Results and figures are written to `PythonCode/results/validation/` and `PythonCode/results/benchmark/`.
 
 Code structure (`PythonCode/src/itokawa_opt/`):
 
@@ -117,8 +118,9 @@ Code structure (`PythonCode/src/itokawa_opt/`):
 | `astro/` | Two-body mechanics: Kepler's equation, element conversions, Lambert solver |
 | `ephemeris/` | Positions of Earth and Itokawa at any time |
 | `problems/` | The optimisation problem: ΔV and constraint as a function of (t0, T) |
-| `optimizers/` | MATLAB grid port, Lambert grid, SQP refinement |
-| `viz/` | Porkchop plot and orbit plot |
+| `optimizers/` | MATLAB grid port, Lambert grid, Differential Evolution, SQP refinement, hybrid DE + SQP pipeline |
+| `analysis/` | Benchmark of the optimisers over seeded runs, statistics (success rate, ERT, Mann-Whitney, Fisher) |
+| `viz/` | Porkchop plot, orbit plot, benchmark figures |
 
 Conventions: units km, s, km/s, rad; t = 0 is the Earth perihelion of 4 January 2025;
 the validation uses the thesis values (μ_Sun = 1.327·10¹¹ km³/s², fixed Keplerian elements).
